@@ -1,2 +1,4 @@
-// 공개용 키만 입력하세요. secret/service_role 키는 절대 사용하지 마세요.
-window.GSAT_CONFIG = { url: '', key: '' };
+window.GSAT_CONFIG = {
+  url: 'https://xixuvrbdctxfknjtmpod.supabase.co',
+  key: 'sb_publishable_bqQdtW8ZPNlfrQJC8bIbMw_J4Obj1F8'
+};
