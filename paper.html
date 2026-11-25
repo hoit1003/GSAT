@@ -1,27 +1,119 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0c111b"><title>GSAT 문제풀이 용지</title><link rel="stylesheet" href="theme.css?v=33"><style>main{max-width:1120px}.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#141d2c;padding:12px;z-index:5;border-radius:12px}.tools button,.tools select,.tools input{padding:8px;border-radius:8px}.input-mode{position:sticky;top:0;z-index:6;margin-top:8px}
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0c111b"><title>문제풀이 용지 · GSAT STUDY MASTER VER.3.5.0</title><link rel="stylesheet" href="theme.css?v=33"><style>main{max-width:1120px}.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#141d2c;padding:12px;z-index:5;border-radius:12px}.tools button,.tools select,.tools input{padding:8px;border-radius:8px}.input-mode{position:sticky;top:env(safe-area-inset-top, 0px);z-index:6;margin-top:8px}
 .input-mode label{display:flex;align-items:center;gap:8px}
 .input-mode select{min-height:44px;font-size:16px}
 .cell canvas{position:absolute;inset:0}
-.cells[data-input-mode="pen"] canvas,.cells[data-input-mode="scroll"] canvas{touch-action:pan-y}
-.sheet{background:#fff;color:#18212d;padding:24px;margin:16px auto;width:100%;max-width:850px;border-radius:4px}.head{display:flex;justify-content:space-between;border-bottom:2px solid #25364d;padding-bottom:10px;gap:8px;flex-wrap:wrap}.head input{background:#fff;color:#17243c;border:1px solid #aab4bf;padding:6px;width:180px}.cells{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-left:1px solid #7b8794;border-top:1px solid #7b8794;margin-top:12px}.cell{position:relative;aspect-ratio:1.08;border-right:1px solid #7b8794;border-bottom:1px solid #7b8794;min-width:0}.cell canvas{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}.num{position:absolute;left:7px;top:5px;font-size:12px;pointer-events:none}.ans{position:absolute;bottom:0;right:0;width:80px;background:white;display:flex;align-items:center;border:1px solid #7b8794;font-size:11px;padding-left:4px}.ans input{background:white;color:#111;border:0;width:48px;min-height:28px;font-size:15px;padding:3px;text-align:center}.clock{font-size:24px;font-variant-numeric:tabular-nums;font-weight:bold}.active{outline:2px solid #8fc5ff}.sheet h2{margin:0;color:#18212d}.sheet small{color:#526272}@media(max-width:600px){.sheet{padding:10px}.cells{grid-template-columns:1fr}.cell{aspect-ratio:1.25}}@media print{html,body{background:white}main{padding:0;max-width:none}.no-print{display:none!important}.sheet{margin:0;padding:0;max-width:none}.cells{grid-template-columns:repeat(2,1fr)}.cell{aspect-ratio:1.1;break-inside:avoid}@page{size:A4;margin:12mm}}</style></head><body><main><div class="no-print"><a href="index.html?v=33">‹ GSAT 홈</a><h1>문제풀이 용지</h1><p>종이 문제집을 보면서 빈칸에 직접 풀이하세요. Apple Pencil, 터치, 마우스 지원.</p><div class="tools"><select id="area" aria-label="영역"><option>수리</option><option>추리</option><option>지각</option><option>자유 연습</option></select><button id="prev">‹ 이전</button><span id="pageLabel"></span><button id="next">다음 ›</button><button id="pen" class="active">펜</button><button id="eraser">지우개</button><button id="undo">실행 취소</button><input id="color" type="color" value="#17243c" aria-label="펜 색상"><select id="width" aria-label="펜 굵기"><option value="2">가는 펜</option><option value="4" selected>보통 펜</option><option value="7">굵은 펜</option></select><button id="clear">현재 페이지 지우기</button><button id="export">PNG 저장</button><button onclick="window.print()">인쇄</button></div><div class="tools"><select id="duration" aria-label="시간"><option value="0">스톱워치</option><option value="900">15분</option><option value="1200">20분</option><option value="600">10분</option><option value="2700">45분</option></select><span class="clock" id="timer">00:00</span><button id="start">시작</button><button id="reset">초기화</button><small id="status">필기는 현재 기기에 자동 저장됩니다.</small></div></div><div class="tools input-mode no-print">
+.cells[data-input-mode="scroll"] canvas{touch-action:pan-y}
+@media screen{
+  html.pen-scroll-lock{overflow:hidden;overscroll-behavior:none}
+  html.pen-scroll-lock body{touch-action:none}
+}
+.sheet{background:#fff;color:#18212d;padding:24px;margin:16px auto;width:100%;max-width:850px;border-radius:4px}.head{display:flex;justify-content:space-between;border-bottom:2px solid #25364d;padding-bottom:10px;gap:8px;flex-wrap:wrap}.head input{background:#fff;color:#17243c;border:1px solid #aab4bf;padding:6px;width:180px}.cells{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-left:1px solid #7b8794;border-top:1px solid #7b8794;margin-top:12px}.cell{position:relative;aspect-ratio:1.08;border-right:1px solid #7b8794;border-bottom:1px solid #7b8794;min-width:0}.cell canvas{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}.num{position:absolute;left:7px;top:5px;font-size:12px;pointer-events:none}.ans{position:absolute;bottom:0;right:0;width:80px;background:white;display:flex;align-items:center;border:1px solid #7b8794;font-size:11px;padding-left:4px}.ans input{background:white;color:#111;border:0;width:48px;min-height:28px;font-size:15px;padding:3px;text-align:center}.clock{font-size:24px;font-variant-numeric:tabular-nums;font-weight:bold}.active{outline:2px solid #8fc5ff}.sheet h2{margin:0;color:#18212d}.sheet small{color:#526272}@media(max-width:600px){.sheet{padding:10px}.cells{grid-template-columns:1fr}.cell{aspect-ratio:1.25}}@media print{html,body{background:white}main{padding:0;max-width:none}.no-print{display:none!important}.sheet{margin:0;padding:0;max-width:none}.cells{grid-template-columns:repeat(2,1fr)}.cell{aspect-ratio:1.1;break-inside:avoid}@page{size:A4;margin:12mm}}</style></head><body><main><div class="no-print"><a href="index.html?v=3.5.0">‹ GSAT 홈</a><h1>문제풀이 용지</h1><p>종이 문제집을 보면서 빈칸에 직접 풀이하세요. Apple Pencil, 터치, 마우스 지원.</p><div class="tools"><select id="area" aria-label="영역"><option>수리</option><option>추리</option><option>지각</option><option>자유 연습</option></select><button id="prev">‹ 이전</button><span id="pageLabel"></span><button id="next">다음 ›</button><button id="pen" class="active">펜</button><button id="undo">실행 취소</button><input id="color" type="color" value="#17243c" aria-label="펜 색상"><select id="width" aria-label="펜 굵기"><option value="2">가는 펜</option><option value="4" selected>보통 펜</option><option value="7">굵은 펜</option></select><button id="clear">현재 페이지 지우기</button><button id="export">PNG 저장</button><button onclick="window.print()">인쇄</button></div><div class="tools"><select id="duration" aria-label="시간"><option value="0">스톱워치</option><option value="900">15분</option><option value="1200">20분</option><option value="600">10분</option><option value="2700">45분</option></select><span class="clock" id="timer">00:00</span><button id="start">시작</button><button id="reset">초기화</button><small id="status">필기는 현재 기기에 자동 저장됩니다.</small></div></div><div class="tools input-mode no-print">
 <label>터치 모드
 <select id="inputMode">
 <option value="draw">손가락으로 필기</option>
 <option value="scroll">스크롤만</option>
-<option value="pen">펜슬만 필기</option>
+<option value="pen">펜슬만 필기 · 화면 고정</option>
+</select>
+</label>
+<button id="eraser" type="button" aria-pressed="false">지우개</button>
+<label>지우기
+<select id="eraserType">
+<option value="stroke">획 전체</option>
+<option value="partial">닿은 부분</option>
 </select>
 </label>
 </div><div class="sheet" id="sheet"><div class="head"><div><h2 id="heading">수리 문제풀이</h2><small id="range"></small></div><input id="title" placeholder="교재 / 회차" aria-label="교재 회차"></div><div class="cells" id="cells"></div></div><p class="no-print"><small>6칸씩 7페이지(40문항). 필기 기록은 계정 동기화 대상이 아니며 PNG로 보관할 수 있습니다.</small></p></main><script>
-(function(){var $=function(id){return document.getElementById(id)},page=0,area='수리',data={},active=null,mode='pen',W=720,H=660;try{data=JSON.parse(localStorage.getItem('gsat-paper-v1')||'{}')}catch(e){}function key(){return area+':'+page}function current(){return data[key()]||(data[key()]={title:'',cells:[]})}function save(){try{localStorage.setItem('gsat-paper-v1',JSON.stringify(data));$('status').textContent='현재 기기에 저장됨'}catch(e){$('status').textContent='저장 공간 부족 · PNG로 저장하세요'}}function cell(i){var a=current().cells;return a[i]||(a[i]={strokes:[],answer:''})}function draw(canvas,strokes){var c=canvas.getContext('2d');c.clearRect(0,0,W,H);strokes.forEach(function(s){if(!s.points.length)return;c.globalCompositeOperation=s.erase?'destination-out':'source-over';c.strokeStyle=s.color;c.fillStyle=s.color;c.lineWidth=s.width;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(s.points[0][0],s.points[0][1]);s.points.forEach(function(p){c.lineTo(p[0],p[1])});if(s.points.length===1){c.lineTo(s.points[0][0]+0.1,s.points[0][1])}c.stroke()});c.globalCompositeOperation='source-over'}function point(e,c){var r=c.getBoundingClientRect();return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]}function render(){if(active){save();active=null}$('cells').innerHTML='';$('heading').textContent=area+' 문제풀이';$('pageLabel').textContent=(page+1)+' / 7';$('range').textContent=(page*6+1)+' ~ '+Math.min(40,page*6+6)+'번';$('title').value=current().title;$('prev').disabled=page===0;$('next').disabled=page===6;for(var i=0;i<Math.min(6,40-page*6);i++)(function(i){var d=cell(i),box=document.createElement('div');box.className='cell';var c=document.createElement('canvas');c.width=W;c.height=H;c.setAttribute('aria-label',(page*6+i+1)+'번 필기');box.appendChild(c);var n=document.createElement('span');n.className='num';n.textContent=(page*6+i+1)+'.';box.appendChild(n);var lab=document.createElement('label');lab.className='ans';lab.textContent='정답';var inp=document.createElement('input');inp.value=d.answer;inp.maxLength=10;inp.setAttribute('aria-label','정답');inp.oninput=function(){d.answer=inp.value;save()};lab.appendChild(inp);box.appendChild(lab);$('cells').appendChild(box);draw(c,d.strokes);// Cancel native touch scrolling on the drawing surface in finger-writing mode.
+(function(){var $=function(id){return document.getElementById(id)},page=0,area='수리',data={},active=null,mode='pen',W=720,H=660;try{data=JSON.parse(localStorage.getItem('gsat-paper-v1')||'{}')}catch(e){}function key(){return area+':'+page}function current(){return data[key()]||(data[key()]={title:'',cells:[]})}function save(){try{localStorage.setItem('gsat-paper-v1',JSON.stringify(data));$('status').textContent='현재 기기에 저장됨'}catch(e){$('status').textContent='저장 공간 부족 · PNG로 저장하세요'}}function cell(i){var a=current().cells;return a[i]||(a[i]={strokes:[],answer:''})}function draw(canvas,strokes){var c=canvas.getContext('2d');c.clearRect(0,0,W,H);var hidden=erasedStrokes(strokes);strokes.forEach(function(s,index){if(s.removed||hidden.has(index)||!s.points.length)return;c.globalCompositeOperation=s.erase?'destination-out':'source-over';c.strokeStyle=s.color;c.fillStyle=s.color;c.lineWidth=s.width;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(s.points[0][0],s.points[0][1]);s.points.forEach(function(p){c.lineTo(p[0],p[1])});if(s.points.length===1){c.lineTo(s.points[0][0]+0.1,s.points[0][1])}c.stroke()});c.globalCompositeOperation='source-over'}
+// Keep whole-stroke erasures in the same history as pen and partial eraser strokes.
+function erasedStrokes(strokes){
+  var hidden=new Set();
+  strokes.forEach(function(stroke){
+    if(stroke.removed)stroke.removed.forEach(function(index){hidden.add(index)});
+  });
+  return hidden;
+}
+function distanceToSegmentSquared(point,start,end){
+  var dx=end[0]-start[0],dy=end[1]-start[1];
+  var lengthSquared=dx*dx+dy*dy;
+  var x=point[0]-start[0],y=point[1]-start[1];
+  var fraction=lengthSquared?Math.max(0,Math.min(1,(x*dx+y*dy)/lengthSquared)):0;
+  return (x-fraction*dx)**2+(y-fraction*dy)**2;
+}
+function eraseStrokes(gesture,point){
+  var start=gesture.lastPoint;
+  var dx=point[0]-start[0],dy=point[1]-start[1];
+  var steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)/7));
+  var hits=gesture.s.removed;
+  var strokes=gesture.d.strokes;
+  strokes.forEach(function(stroke,index){
+    if(stroke.erase||stroke.removed||gesture.hidden.has(index))return;
+    var radius=14+stroke.width/2;
+    for(var step=0;step<=steps;step++){
+      var sample=[start[0]+dx*step/steps,start[1]+dy*step/steps];
+      var touches=stroke.points.some(function(end,i){
+        return distanceToSegmentSquared(sample,stroke.points[Math.max(0,i-1)],end)<=radius*radius;
+      });
+      if(touches){
+        gesture.hidden.add(index);
+        hits.push(index);
+        break;
+      }
+    }
+  });
+  if(hits.length&&strokes[strokes.length-1]!==gesture.s)strokes.push(gesture.s);
+  gesture.lastPoint=point;
+}
+function point(e,c){var r=c.getBoundingClientRect();return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]}function render(){if(active){save();active=null}$('cells').innerHTML='';$('heading').textContent=area+' 문제풀이';$('pageLabel').textContent=(page+1)+' / 7';$('range').textContent=(page*6+1)+' ~ '+Math.min(40,page*6+6)+'번';$('title').value=current().title;$('prev').disabled=page===0;$('next').disabled=page===6;for(var i=0;i<Math.min(6,40-page*6);i++)(function(i){var d=cell(i),box=document.createElement('div');box.className='cell';var c=document.createElement('canvas');c.width=W;c.height=H;c.setAttribute('aria-label',(page*6+i+1)+'번 필기');box.appendChild(c);var n=document.createElement('span');n.className='num';n.textContent=(page*6+i+1)+'.';box.appendChild(n);var lab=document.createElement('label');lab.className='ans';lab.textContent='정답';var inp=document.createElement('input');inp.value=d.answer;inp.maxLength=10;inp.setAttribute('aria-label','정답');inp.oninput=function(){d.answer=inp.value;save()};lab.appendChild(inp);box.appendChild(lab);$('cells').appendChild(box);draw(c,d.strokes);// Keep native touch gestures off the canvas in both writing modes.
 function preventTouchScroll(e){
-  if($('inputMode').value==='draw'&&e.cancelable)e.preventDefault();
+  if($('inputMode').value!=='scroll'&&e.cancelable)e.preventDefault();
 }
 c.addEventListener('touchstart',preventTouchScroll,{passive:false});
 c.addEventListener('touchmove',preventTouchScroll,{passive:false});
 c.addEventListener('pointerdown',function(e){
   var inputMode=$('inputMode').value;
   if(active||e.button!==0||inputMode==='scroll'||(inputMode==='pen'&&e.pointerType!=='pen'))return;
-  e.preventDefault();var s={erase:mode==='eraser',color:$('color').value,width:mode==='eraser'?28:Number($('width').value)*2,points:[point(e,c)]};d.strokes.push(s);active={id:e.pointerId,c:c,s:s,d:d};last=i;try{c.setPointerCapture(e.pointerId)}catch(x){}draw(c,d.strokes)});c.addEventListener('pointermove',function(e){if(!active||active.c!==c||active.id!==e.pointerId)return;e.preventDefault();var ev=e.getCoalescedEvents?e.getCoalescedEvents():[e];if(!ev.length)ev=[e];ev.forEach(function(v){active.s.points.push(point(v,c))});draw(c,d.strokes)});function end(e){if(active&&active.id===e.pointerId){active=null;save()}}c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('lostpointercapture',end)})(i);last=0}
+  e.preventDefault();var first=point(e,c);
+  var wholeStroke=mode==='eraser'&&$('eraserType').value==='stroke';
+  var stroke=wholeStroke?{removed:[],points:[]}:{
+    erase:mode==='eraser',
+    color:$('color').value,
+    width:mode==='eraser'?28:Number($('width').value)*2,
+    points:[first]
+  };
+  active={id:e.pointerId,c:c,s:stroke,d:d};
+  if(wholeStroke){
+    active.hidden=erasedStrokes(d.strokes);
+    active.lastPoint=first;
+    eraseStrokes(active,first);
+  }else{
+    d.strokes.push(stroke);
+  }
+  last=i;
+  try{c.setPointerCapture(e.pointerId)}catch(x){}
+  draw(c,d.strokes);
+});
+c.addEventListener('pointermove',function(e){
+  if(!active||active.c!==c||active.id!==e.pointerId)return;
+  e.preventDefault();
+  var samples=e.getCoalescedEvents?e.getCoalescedEvents():[];
+  if(!samples.length)samples=[e];
+  samples.forEach(function(sample){
+    var position=point(sample,c);
+    if(active.s.removed)eraseStrokes(active,position);
+    else active.s.points.push(position);
+  });
+  draw(c,d.strokes);
+});
+function end(e){
+  if(!active||active.id!==e.pointerId)return;
+  if(e.type==='pointerup'&&active.s.removed){
+    eraseStrokes(active,point(e,c));
+    draw(c,d.strokes);
+  }
+  active=null;
+  save();
+}
+c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('lostpointercapture',end)})(i);last=0}
 var last=0;
 function updateInputMode(){
   if(active){
@@ -30,8 +122,14 @@ function updateInputMode(){
     if(stroke.c.hasPointerCapture(stroke.id))stroke.c.releasePointerCapture(stroke.id);
     save();
   }
-  $('cells').dataset.inputMode=$('inputMode').value;
+  var inputMode=$('inputMode').value;
+  $('cells').dataset.inputMode=inputMode;
+  document.documentElement.classList.toggle('pen-scroll-lock',inputMode==='pen');
 }
+// A palm can land outside the canvas while the Pencil is writing.
+document.addEventListener('touchmove',function(e){
+  if($('inputMode').value==='pen'&&e.cancelable)e.preventDefault();
+},{passive:false});
 $('inputMode').onchange=updateInputMode;
 updateInputMode();
-$('title').oninput=function(){current().title=this.value;save()};$('area').onchange=function(){area=this.value;page=0;render()};$('prev').onclick=function(){if(page>0){page--;render()}};$('next').onclick=function(){if(page<6){page++;render()}};function tool(m){mode=m;$('pen').classList.toggle('active',m==='pen');$('eraser').classList.toggle('active',m==='eraser')}$('pen').onclick=function(){tool('pen')};$('eraser').onclick=function(){tool('eraser')};$('undo').onclick=function(){var d=cell(last);d.strokes.pop();draw($('cells').querySelectorAll('canvas')[last],d.strokes);save()};$('clear').onclick=function(){if(confirm('현재 페이지 필기와 정답을 모두 지울까요?')){delete data[key()];save();render()}};$('export').onclick=function(){var out=document.createElement('canvas');out.width=1440;out.height=2120;var ctx=out.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);ctx.fillStyle='#17243c';ctx.font='bold 34px sans-serif';ctx.fillText(area+' 문제풀이 · '+(page+1)+'페이지',20,48);ctx.font='24px sans-serif';ctx.fillText(current().title,20,84);$('cells').querySelectorAll('canvas').forEach(function(c,i){var x=i%2*720,y=100+Math.floor(i/2)*670;ctx.strokeStyle='#697586';ctx.strokeRect(x+1,y,718,660);ctx.drawImage(c,x,y);ctx.fillStyle='#17243c';ctx.font='24px sans-serif';ctx.fillText(String(page*6+i+1)+'.',x+15,y+32);ctx.fillStyle='#fff';ctx.fillRect(x+540,y+607,178,52);ctx.strokeRect(x+540,y+607,178,52);ctx.fillStyle='#17243c';ctx.fillText('정답 '+cell(i).answer,x+550,y+643)});var a=document.createElement('a');a.href=out.toDataURL('image/png');a.download='GSAT_'+area+'_'+(page+1)+'.png';document.body.appendChild(a);a.click();a.remove()};var started=0,elapsed=0,running=false;function tick(){var t=elapsed+(running?(Date.now()-started)/1000:0),limit=Number($('duration').value),v=Math.floor(limit?Math.max(0,limit-t):t);$('timer').textContent=('0'+Math.floor(v/60)).slice(-2)+':'+('0'+v%60).slice(-2);if(limit&&t>=limit&&running){running=false;elapsed=limit;$('start').textContent='종료';$('start').disabled=true;$('status').textContent='시간 종료'}}$('start').onclick=function(){if(running){elapsed+=(Date.now()-started)/1000;running=false;this.textContent='계속'}else{started=Date.now();running=true;this.textContent='일시정지'}tick()};$('reset').onclick=function(){running=false;elapsed=0;$('start').disabled=false;$('start').textContent='시작';tick()};$('duration').onchange=$('reset').onclick;setInterval(tick,200);render();tick()})();</script></body></html>
+$('title').oninput=function(){current().title=this.value;save()};$('area').onchange=function(){area=this.value;page=0;render()};$('prev').onclick=function(){if(page>0){page--;render()}};$('next').onclick=function(){if(page<6){page++;render()}};function tool(m){mode=m;$('pen').classList.toggle('active',m==='pen');$('eraser').classList.toggle('active',m==='eraser');$('eraser').setAttribute('aria-pressed',String(m==='eraser'))}$('pen').onclick=function(){tool('pen')};$('eraser').onclick=function(){tool(mode==='eraser'?'pen':'eraser')};$('undo').onclick=function(){if(active)return;var d=cell(last);d.strokes.pop();draw($('cells').querySelectorAll('canvas')[last],d.strokes);save()};$('clear').onclick=function(){if(confirm('현재 페이지 필기와 정답을 모두 지울까요?')){delete data[key()];save();render()}};$('export').onclick=function(){var out=document.createElement('canvas');out.width=1440;out.height=2120;var ctx=out.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);ctx.fillStyle='#17243c';ctx.font='bold 34px sans-serif';ctx.fillText(area+' 문제풀이 · '+(page+1)+'페이지',20,48);ctx.font='24px sans-serif';ctx.fillText(current().title,20,84);$('cells').querySelectorAll('canvas').forEach(function(c,i){var x=i%2*720,y=100+Math.floor(i/2)*670;ctx.strokeStyle='#697586';ctx.strokeRect(x+1,y,718,660);ctx.drawImage(c,x,y);ctx.fillStyle='#17243c';ctx.font='24px sans-serif';ctx.fillText(String(page*6+i+1)+'.',x+15,y+32);ctx.fillStyle='#fff';ctx.fillRect(x+540,y+607,178,52);ctx.strokeRect(x+540,y+607,178,52);ctx.fillStyle='#17243c';ctx.fillText('정답 '+cell(i).answer,x+550,y+643)});var a=document.createElement('a');a.href=out.toDataURL('image/png');a.download='GSAT_'+area+'_'+(page+1)+'.png';document.body.appendChild(a);a.click();a.remove()};var started=0,elapsed=0,running=false;function tick(){var t=elapsed+(running?(Date.now()-started)/1000:0),limit=Number($('duration').value),v=Math.floor(limit?Math.max(0,limit-t):t);$('timer').textContent=('0'+Math.floor(v/60)).slice(-2)+':'+('0'+v%60).slice(-2);if(limit&&t>=limit&&running){running=false;elapsed=limit;$('start').textContent='종료';$('start').disabled=true;$('status').textContent='시간 종료'}}$('start').onclick=function(){if(running){elapsed+=(Date.now()-started)/1000;running=false;this.textContent='계속'}else{started=Date.now();running=true;this.textContent='일시정지'}tick()};$('reset').onclick=function(){running=false;elapsed=0;$('start').disabled=false;$('start').textContent='시작';tick()};$('duration').onchange=$('reset').onclick;setInterval(tick,200);render();tick()})();</script></body></html>
