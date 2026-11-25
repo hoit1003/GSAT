@@ -1,135 +1,619 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0c111b"><title>문제풀이 용지 · GSAT STUDY MASTER VER.3.5.0</title><link rel="stylesheet" href="theme.css?v=33"><style>main{max-width:1120px}.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#141d2c;padding:12px;z-index:5;border-radius:12px}.tools button,.tools select,.tools input{padding:8px;border-radius:8px}.input-mode{position:sticky;top:env(safe-area-inset-top, 0px);z-index:6;margin-top:8px}
-.input-mode label{display:flex;align-items:center;gap:8px}
-.input-mode select{min-height:44px;font-size:16px}
-.cell canvas{position:absolute;inset:0}
-.cells[data-input-mode="scroll"] canvas{touch-action:pan-y}
-@media screen{
-  html.pen-scroll-lock{overflow:hidden;overscroll-behavior:none}
-  html.pen-scroll-lock body{touch-action:none}
-}
-.sheet{background:#fff;color:#18212d;padding:24px;margin:16px auto;width:100%;max-width:850px;border-radius:4px}.head{display:flex;justify-content:space-between;border-bottom:2px solid #25364d;padding-bottom:10px;gap:8px;flex-wrap:wrap}.head input{background:#fff;color:#17243c;border:1px solid #aab4bf;padding:6px;width:180px}.cells{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-left:1px solid #7b8794;border-top:1px solid #7b8794;margin-top:12px}.cell{position:relative;aspect-ratio:1.08;border-right:1px solid #7b8794;border-bottom:1px solid #7b8794;min-width:0}.cell canvas{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}.num{position:absolute;left:7px;top:5px;font-size:12px;pointer-events:none}.ans{position:absolute;bottom:0;right:0;width:80px;background:white;display:flex;align-items:center;border:1px solid #7b8794;font-size:11px;padding-left:4px}.ans input{background:white;color:#111;border:0;width:48px;min-height:28px;font-size:15px;padding:3px;text-align:center}.clock{font-size:24px;font-variant-numeric:tabular-nums;font-weight:bold}.active{outline:2px solid #8fc5ff}.sheet h2{margin:0;color:#18212d}.sheet small{color:#526272}@media(max-width:600px){.sheet{padding:10px}.cells{grid-template-columns:1fr}.cell{aspect-ratio:1.25}}@media print{html,body{background:white}main{padding:0;max-width:none}.no-print{display:none!important}.sheet{margin:0;padding:0;max-width:none}.cells{grid-template-columns:repeat(2,1fr)}.cell{aspect-ratio:1.1;break-inside:avoid}@page{size:A4;margin:12mm}}</style></head><body><main><div class="no-print"><a href="index.html?v=3.5.0">‹ GSAT 홈</a><h1>문제풀이 용지</h1><p>종이 문제집을 보면서 빈칸에 직접 풀이하세요. Apple Pencil, 터치, 마우스 지원.</p><div class="tools"><select id="area" aria-label="영역"><option>수리</option><option>추리</option><option>지각</option><option>자유 연습</option></select><button id="prev">‹ 이전</button><span id="pageLabel"></span><button id="next">다음 ›</button><button id="pen" class="active">펜</button><button id="undo">실행 취소</button><input id="color" type="color" value="#17243c" aria-label="펜 색상"><select id="width" aria-label="펜 굵기"><option value="2">가는 펜</option><option value="4" selected>보통 펜</option><option value="7">굵은 펜</option></select><button id="clear">현재 페이지 지우기</button><button id="export">PNG 저장</button><button onclick="window.print()">인쇄</button></div><div class="tools"><select id="duration" aria-label="시간"><option value="0">스톱워치</option><option value="900">15분</option><option value="1200">20분</option><option value="600">10분</option><option value="2700">45분</option></select><span class="clock" id="timer">00:00</span><button id="start">시작</button><button id="reset">초기화</button><small id="status">필기는 현재 기기에 자동 저장됩니다.</small></div></div><div class="tools input-mode no-print">
-<label>터치 모드
-<select id="inputMode">
-<option value="draw">손가락으로 필기</option>
-<option value="scroll">스크롤만</option>
-<option value="pen">펜슬만 필기 · 화면 고정</option>
-</select>
-</label>
-<button id="eraser" type="button" aria-pressed="false">지우개</button>
-<label>지우기
-<select id="eraserType">
-<option value="stroke">획 전체</option>
-<option value="partial">닿은 부분</option>
-</select>
-</label>
-</div><div class="sheet" id="sheet"><div class="head"><div><h2 id="heading">수리 문제풀이</h2><small id="range"></small></div><input id="title" placeholder="교재 / 회차" aria-label="교재 회차"></div><div class="cells" id="cells"></div></div><p class="no-print"><small>6칸씩 7페이지(40문항). 필기 기록은 계정 동기화 대상이 아니며 PNG로 보관할 수 있습니다.</small></p></main><script>
-(function(){var $=function(id){return document.getElementById(id)},page=0,area='수리',data={},active=null,mode='pen',W=720,H=660;try{data=JSON.parse(localStorage.getItem('gsat-paper-v1')||'{}')}catch(e){}function key(){return area+':'+page}function current(){return data[key()]||(data[key()]={title:'',cells:[]})}function save(){try{localStorage.setItem('gsat-paper-v1',JSON.stringify(data));$('status').textContent='현재 기기에 저장됨'}catch(e){$('status').textContent='저장 공간 부족 · PNG로 저장하세요'}}function cell(i){var a=current().cells;return a[i]||(a[i]={strokes:[],answer:''})}function draw(canvas,strokes){var c=canvas.getContext('2d');c.clearRect(0,0,W,H);var hidden=erasedStrokes(strokes);strokes.forEach(function(s,index){if(s.removed||hidden.has(index)||!s.points.length)return;c.globalCompositeOperation=s.erase?'destination-out':'source-over';c.strokeStyle=s.color;c.fillStyle=s.color;c.lineWidth=s.width;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(s.points[0][0],s.points[0][1]);s.points.forEach(function(p){c.lineTo(p[0],p[1])});if(s.points.length===1){c.lineTo(s.points[0][0]+0.1,s.points[0][1])}c.stroke()});c.globalCompositeOperation='source-over'}
-// Keep whole-stroke erasures in the same history as pen and partial eraser strokes.
-function erasedStrokes(strokes){
-  var hidden=new Set();
-  strokes.forEach(function(stroke){
-    if(stroke.removed)stroke.removed.forEach(function(index){hidden.add(index)});
-  });
-  return hidden;
-}
-function distanceToSegmentSquared(point,start,end){
-  var dx=end[0]-start[0],dy=end[1]-start[1];
-  var lengthSquared=dx*dx+dy*dy;
-  var x=point[0]-start[0],y=point[1]-start[1];
-  var fraction=lengthSquared?Math.max(0,Math.min(1,(x*dx+y*dy)/lengthSquared)):0;
-  return (x-fraction*dx)**2+(y-fraction*dy)**2;
-}
-function eraseStrokes(gesture,point){
-  var start=gesture.lastPoint;
-  var dx=point[0]-start[0],dy=point[1]-start[1];
-  var steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)/7));
-  var hits=gesture.s.removed;
-  var strokes=gesture.d.strokes;
-  strokes.forEach(function(stroke,index){
-    if(stroke.erase||stroke.removed||gesture.hidden.has(index))return;
-    var radius=14+stroke.width/2;
-    for(var step=0;step<=steps;step++){
-      var sample=[start[0]+dx*step/steps,start[1]+dy*step/steps];
-      var touches=stroke.points.some(function(end,i){
-        return distanceToSegmentSquared(sample,stroke.points[Math.max(0,i-1)],end)<=radius*radius;
-      });
-      if(touches){
-        gesture.hidden.add(index);
-        hits.push(index);
-        break;
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111722">
+  <title>문제풀이 용지 · GSAT STUDY MASTER VER.4.0.0</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font: 16px system-ui, -apple-system, sans-serif;
+      background: #111722;
+      color: #edf2fa;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #a9d0ff; }
+    button, select, input { font: inherit; }
+    button, select {
+      min-height: 44px;
+      padding: 6px 12px;
+      color: inherit;
+      background: #242e40;
+      border: 1px solid #45536b;
+      border-radius: 8px;
+      touch-action: manipulation;
+    }
+    button:disabled { opacity: .45; }
+    button[aria-pressed="true"] {
+      background: #264a77;
+      border-color: #a9d0ff;
+    }
+    :focus-visible {
+      outline: 2px solid #79b8ff;
+      outline-offset: 2px;
+    }
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
+      background: #171f2d;
+      border-bottom: 1px solid #35425a;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .row + .row { margin-top: 6px; }
+    .tools { flex-wrap: wrap; }
+    .page-label { min-width: 48px; text-align: center; }
+    .options { margin-left: auto; }
+    .options summary { cursor: pointer; padding: 10px 0 10px 4px; }
+    .options-panel {
+      position: absolute;
+      top: 100%;
+      right: 12px;
+      width: min(360px, calc(100vw - 24px));
+      max-height: 55vh;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid #45536b;
+      border-radius: 10px;
+      background: #171f2d;
+    }
+    .options-panel > * { margin: 4px 0; }
+    .version, .status { font-size: .8rem; color: #b8c5d8; }
+    .clock { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    .sheet {
+      width: min(850px, calc(100% - 24px));
+      margin: 14px auto calc(24px + env(safe-area-inset-bottom));
+      padding: 18px;
+      background: #fff;
+      color: #18243a;
+      color-scheme: light;
+      border-radius: 4px;
+    }
+    .sheet-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: end;
+      gap: 8px;
+      border-bottom: 2px solid #273951;
+      padding-bottom: 8px;
+    }
+    h1 { margin: 0 0 4px; font-size: 1.25rem; }
+    .sheet input {
+      color: #18243a;
+      background: #fff;
+      border: 1px solid #8592a4;
+    }
+    #title { width: 165px; min-height: 36px; padding: 5px; }
+    .cells {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 10px;
+      border-top: 1px solid #8592a4;
+      border-left: 1px solid #8592a4;
+    }
+    .cell {
+      position: relative;
+      aspect-ratio: 1.08;
+      border-right: 1px solid #8592a4;
+      border-bottom: 1px solid #8592a4;
+    }
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .number {
+      position: absolute;
+      top: 6px;
+      left: 7px;
+      font-size: .8rem;
+      pointer-events: none;
+    }
+    .answer {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding-left: 5px;
+      border: solid #8592a4;
+      border-width: 1px 0 0 1px;
+      background: #fff;
+      font-size: .75rem;
+    }
+    .answer input {
+      width: 49px;
+      min-height: 34px;
+      border: 0;
+      text-align: center;
+      font-size: 16px;
+    }
+    @media (max-width: 600px) {
+      .sheet { padding: 10px; }
+      .cells { grid-template-columns: 1fr; }
+      .cell { aspect-ratio: 1.25; }
+    }
+    @media print {
+      :root, body { background: #fff; }
+      .top { display: none; }
+      .sheet { width: 100%; margin: 0; padding: 0; }
+      .cells { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cell { aspect-ratio: 1.2; break-inside: avoid; }
+      @page { size: A4; margin: 12mm; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="row">
+      <a href="index.html">‹ 홈</a>
+      <select id="area" aria-label="영역">
+        <option>수리</option>
+        <option>추리</option>
+        <option>지각</option>
+        <option>자유 연습</option>
+      </select>
+      <button id="prev" type="button" aria-label="이전 용지">‹</button>
+      <span class="page-label" id="page"></span>
+      <button id="next" type="button" aria-label="다음 용지">›</button>
+      <details class="options">
+        <summary>더 보기</summary>
+        <div class="options-panel">
+          <div>
+            <label>입력 <select id="input-mode">
+              <option value="pencil">펜슬 필기 · 손가락 이동</option>
+              <option value="finger">손가락으로 필기</option>
+            </select></label>
+          </div>
+          <div>
+            <label>펜 색상 <input id="color" type="color" value="#17243c"></label>
+            <label>굵기 <select id="width">
+              <option value="4">가는 펜</option>
+              <option value="8" selected>보통 펜</option>
+              <option value="14">굵은 펜</option>
+            </select></label>
+          </div>
+          <button id="clear" type="button">현재 페이지 지우기</button>
+          <button id="export" type="button">PNG 저장</button>
+          <button id="print" type="button">인쇄</button>
+          <div class="status" id="status" role="status"></div>
+          <div class="version">GSAT STUDY MASTER VER.4.0.0</div>
+        </div>
+      </details>
+    </div>
+    <div class="row tools">
+      <button id="pen" type="button" aria-pressed="true">펜</button>
+      <button id="eraser" type="button" aria-pressed="false">지우개</button>
+      <select id="eraser-type" aria-label="지우개 방식">
+        <option value="stroke">획 전체</option>
+        <option value="partial">닿은 부분</option>
+      </select>
+      <button id="undo" type="button">실행 취소</button>
+      <button class="clock" id="timer" type="button" aria-label="타이머 시작">00:00</button>
+      <select id="duration" aria-label="타이머 시간">
+        <option value="0">스톱워치</option>
+        <option value="600">10분</option>
+        <option value="900">15분</option>
+        <option value="1200">20분</option>
+        <option value="2700">45분</option>
+      </select>
+      <button id="reset-timer" type="button">초기화</button>
+    </div>
+  </header>
+
+  <main class="sheet">
+    <div class="sheet-head">
+      <div>
+        <h1 id="heading"></h1>
+        <span id="range"></span>
+      </div>
+      <input id="title" aria-label="교재 또는 회차" placeholder="교재 / 회차">
+    </div>
+    <div class="cells" id="cells"></div>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const W = 720;
+    const H = 660;
+    const storageKey = 'gsat-paper-v1';
+    const questionCount = 40;
+    const pageSize = 6;
+    const pageCount = Math.ceil(questionCount / pageSize);
+    let data = {};
+    let page = 0;
+    let tool = 'pen';
+    let active = null;
+    let drag = null;
+    let lastCell = 0;
+    let ignoreTouchUntil = 0;
+    let canvases = [];
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      if (saved && typeof saved === 'object') data = saved;
+    } catch {
+      $('status').textContent = '기존 필기를 읽을 수 없어요.';
+    }
+
+    function key() {
+      return $('area').value + ':' + page;
+    }
+
+    function current() {
+      return data[key()] ??= { title: '', cells: [] };
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        $('status').textContent = '현재 기기에 저장됨';
+      } catch {
+        $('status').textContent = '저장할 수 없어요. PNG로 보관해 주세요.';
       }
     }
-  });
-  if(hits.length&&strokes[strokes.length-1]!==gesture.s)strokes.push(gesture.s);
-  gesture.lastPoint=point;
-}
-function point(e,c){var r=c.getBoundingClientRect();return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]}function render(){if(active){save();active=null}$('cells').innerHTML='';$('heading').textContent=area+' 문제풀이';$('pageLabel').textContent=(page+1)+' / 7';$('range').textContent=(page*6+1)+' ~ '+Math.min(40,page*6+6)+'번';$('title').value=current().title;$('prev').disabled=page===0;$('next').disabled=page===6;for(var i=0;i<Math.min(6,40-page*6);i++)(function(i){var d=cell(i),box=document.createElement('div');box.className='cell';var c=document.createElement('canvas');c.width=W;c.height=H;c.setAttribute('aria-label',(page*6+i+1)+'번 필기');box.appendChild(c);var n=document.createElement('span');n.className='num';n.textContent=(page*6+i+1)+'.';box.appendChild(n);var lab=document.createElement('label');lab.className='ans';lab.textContent='정답';var inp=document.createElement('input');inp.value=d.answer;inp.maxLength=10;inp.setAttribute('aria-label','정답');inp.oninput=function(){d.answer=inp.value;save()};lab.appendChild(inp);box.appendChild(lab);$('cells').appendChild(box);draw(c,d.strokes);// Keep native touch gestures off the canvas in both writing modes.
-function preventTouchScroll(e){
-  if($('inputMode').value!=='scroll'&&e.cancelable)e.preventDefault();
-}
-c.addEventListener('touchstart',preventTouchScroll,{passive:false});
-c.addEventListener('touchmove',preventTouchScroll,{passive:false});
-c.addEventListener('pointerdown',function(e){
-  var inputMode=$('inputMode').value;
-  if(active||e.button!==0||inputMode==='scroll'||(inputMode==='pen'&&e.pointerType!=='pen'))return;
-  e.preventDefault();var first=point(e,c);
-  var wholeStroke=mode==='eraser'&&$('eraserType').value==='stroke';
-  var stroke=wholeStroke?{removed:[],points:[]}:{
-    erase:mode==='eraser',
-    color:$('color').value,
-    width:mode==='eraser'?28:Number($('width').value)*2,
-    points:[first]
-  };
-  active={id:e.pointerId,c:c,s:stroke,d:d};
-  if(wholeStroke){
-    active.hidden=erasedStrokes(d.strokes);
-    active.lastPoint=first;
-    eraseStrokes(active,first);
-  }else{
-    d.strokes.push(stroke);
-  }
-  last=i;
-  try{c.setPointerCapture(e.pointerId)}catch(x){}
-  draw(c,d.strokes);
-});
-c.addEventListener('pointermove',function(e){
-  if(!active||active.c!==c||active.id!==e.pointerId)return;
-  e.preventDefault();
-  var samples=e.getCoalescedEvents?e.getCoalescedEvents():[];
-  if(!samples.length)samples=[e];
-  samples.forEach(function(sample){
-    var position=point(sample,c);
-    if(active.s.removed)eraseStrokes(active,position);
-    else active.s.points.push(position);
-  });
-  draw(c,d.strokes);
-});
-function end(e){
-  if(!active||active.id!==e.pointerId)return;
-  if(e.type==='pointerup'&&active.s.removed){
-    eraseStrokes(active,point(e,c));
-    draw(c,d.strokes);
-  }
-  active=null;
-  save();
-}
-c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('lostpointercapture',end)})(i);last=0}
-var last=0;
-function updateInputMode(){
-  if(active){
-    var stroke=active;
-    active=null;
-    if(stroke.c.hasPointerCapture(stroke.id))stroke.c.releasePointerCapture(stroke.id);
-    save();
-  }
-  var inputMode=$('inputMode').value;
-  $('cells').dataset.inputMode=inputMode;
-  document.documentElement.classList.toggle('pen-scroll-lock',inputMode==='pen');
-}
-// A palm can land outside the canvas while the Pencil is writing.
-document.addEventListener('touchmove',function(e){
-  if($('inputMode').value==='pen'&&e.cancelable)e.preventDefault();
-},{passive:false});
-$('inputMode').onchange=updateInputMode;
-updateInputMode();
-$('title').oninput=function(){current().title=this.value;save()};$('area').onchange=function(){area=this.value;page=0;render()};$('prev').onclick=function(){if(page>0){page--;render()}};$('next').onclick=function(){if(page<6){page++;render()}};function tool(m){mode=m;$('pen').classList.toggle('active',m==='pen');$('eraser').classList.toggle('active',m==='eraser');$('eraser').setAttribute('aria-pressed',String(m==='eraser'))}$('pen').onclick=function(){tool('pen')};$('eraser').onclick=function(){tool(mode==='eraser'?'pen':'eraser')};$('undo').onclick=function(){if(active)return;var d=cell(last);d.strokes.pop();draw($('cells').querySelectorAll('canvas')[last],d.strokes);save()};$('clear').onclick=function(){if(confirm('현재 페이지 필기와 정답을 모두 지울까요?')){delete data[key()];save();render()}};$('export').onclick=function(){var out=document.createElement('canvas');out.width=1440;out.height=2120;var ctx=out.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);ctx.fillStyle='#17243c';ctx.font='bold 34px sans-serif';ctx.fillText(area+' 문제풀이 · '+(page+1)+'페이지',20,48);ctx.font='24px sans-serif';ctx.fillText(current().title,20,84);$('cells').querySelectorAll('canvas').forEach(function(c,i){var x=i%2*720,y=100+Math.floor(i/2)*670;ctx.strokeStyle='#697586';ctx.strokeRect(x+1,y,718,660);ctx.drawImage(c,x,y);ctx.fillStyle='#17243c';ctx.font='24px sans-serif';ctx.fillText(String(page*6+i+1)+'.',x+15,y+32);ctx.fillStyle='#fff';ctx.fillRect(x+540,y+607,178,52);ctx.strokeRect(x+540,y+607,178,52);ctx.fillStyle='#17243c';ctx.fillText('정답 '+cell(i).answer,x+550,y+643)});var a=document.createElement('a');a.href=out.toDataURL('image/png');a.download='GSAT_'+area+'_'+(page+1)+'.png';document.body.appendChild(a);a.click();a.remove()};var started=0,elapsed=0,running=false;function tick(){var t=elapsed+(running?(Date.now()-started)/1000:0),limit=Number($('duration').value),v=Math.floor(limit?Math.max(0,limit-t):t);$('timer').textContent=('0'+Math.floor(v/60)).slice(-2)+':'+('0'+v%60).slice(-2);if(limit&&t>=limit&&running){running=false;elapsed=limit;$('start').textContent='종료';$('start').disabled=true;$('status').textContent='시간 종료'}}$('start').onclick=function(){if(running){elapsed+=(Date.now()-started)/1000;running=false;this.textContent='계속'}else{started=Date.now();running=true;this.textContent='일시정지'}tick()};$('reset').onclick=function(){running=false;elapsed=0;$('start').disabled=false;$('start').textContent='시작';tick()};$('duration').onchange=$('reset').onclick;setInterval(tick,200);render();tick()})();</script></body></html>
+
+    function hiddenStrokes(strokes) {
+      const hidden = new Set();
+      for (const stroke of strokes) {
+        for (const index of stroke.removed || []) hidden.add(index);
+      }
+      return hidden;
+    }
+
+    function draw(canvas, strokes) {
+      const ctx = canvas.getContext('2d');
+      const hidden = hiddenStrokes(strokes);
+      ctx.clearRect(0, 0, W, H);
+      strokes.forEach((stroke, index) => {
+        const points = stroke.points;
+        if (hidden.has(index) || !points?.length) return;
+        ctx.globalCompositeOperation = stroke.erase ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = stroke.color;
+        ctx.lineWidth = stroke.width;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(...points[0]);
+        if (points.length === 1) ctx.lineTo(points[0][0] + 0.1, points[0][1]);
+        else for (const point of points.slice(1)) ctx.lineTo(...point);
+        ctx.stroke();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function position(event, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      return [
+        (event.clientX - rect.left) * W / rect.width,
+        (event.clientY - rect.top) * H / rect.height
+      ];
+    }
+
+    function distanceSquared(point, start, end) {
+      const dx = end[0] - start[0];
+      const dy = end[1] - start[1];
+      const lengthSquared = dx * dx + dy * dy;
+      const x = point[0] - start[0];
+      const y = point[1] - start[1];
+      const fraction = lengthSquared
+        ? Math.max(0, Math.min(1, (x * dx + y * dy) / lengthSquared))
+        : 0;
+      return (x - fraction * dx) ** 2 + (y - fraction * dy) ** 2;
+    }
+
+    function eraseWhole(gesture, point) {
+      const [x, y] = gesture.lastPoint;
+      const dx = point[0] - x;
+      const dy = point[1] - y;
+      const steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 7));
+      const hits = gesture.stroke.removed;
+
+      gesture.cell.strokes.forEach((stroke, index) => {
+        if (stroke.erase || stroke.removed || gesture.hidden.has(index)) return;
+        if (!stroke.points?.length) return;
+        const radius = 14 + stroke.width / 2;
+        for (let i = 0; i <= steps; i++) {
+          const sample = [x + dx * i / steps, y + dy * i / steps];
+          const hit = stroke.points.some((end, j) => (
+            distanceSquared(sample, stroke.points[Math.max(0, j - 1)], end) <= radius ** 2
+          ));
+          if (!hit) continue;
+          gesture.hidden.add(index);
+          hits.push(index);
+          break;
+        }
+      });
+
+      if (hits.length && !gesture.recorded) {
+        gesture.cell.strokes.push(gesture.stroke);
+        gesture.recorded = true;
+      }
+      gesture.lastPoint = point;
+    }
+
+    function finishStroke() {
+      if (!active) return;
+      const gesture = active;
+      active = null;
+      if (gesture.pencil) ignoreTouchUntil = performance.now() + 120;
+      if (gesture.canvas.hasPointerCapture(gesture.id)) {
+        gesture.canvas.releasePointerCapture(gesture.id);
+      }
+      if (gesture.recorded) save();
+    }
+
+    function stopDrag() {
+      if (!drag) return;
+      const gesture = drag;
+      drag = null;
+      if (gesture.canvas.hasPointerCapture(gesture.id)) {
+        gesture.canvas.releasePointerCapture(gesture.id);
+      }
+    }
+
+    function bindCanvas(canvas, cell, index) {
+      canvas.addEventListener('contextmenu', event => event.preventDefault());
+
+      canvas.addEventListener('pointerdown', event => {
+        if (active || event.button !== 0) return;
+        const pencil = event.pointerType === 'pen';
+        const finger = event.pointerType === 'touch';
+
+        if (finger && performance.now() < ignoreTouchUntil) return;
+        if (finger && $('input-mode').value === 'pencil') {
+          if (drag || !event.isPrimary || Math.max(event.width, event.height) > 42) return;
+          drag = {
+            id: event.pointerId,
+            canvas,
+            startY: event.clientY,
+            scrollY: window.scrollY
+          };
+          canvas.setPointerCapture(event.pointerId);
+          return;
+        }
+
+        event.preventDefault();
+        stopDrag();
+        lastCell = index;
+        const first = position(event, canvas);
+        const whole = tool === 'eraser' && $('eraser-type').value === 'stroke';
+        const stroke = whole ? { removed: [], points: [] } : {
+          erase: tool === 'eraser',
+          color: $('color').value,
+          width: tool === 'eraser' ? 28 : Number($('width').value),
+          points: [first]
+        };
+
+        active = {
+          id: event.pointerId, canvas, cell, pencil, stroke, recorded: !whole
+        };
+        if (whole) {
+          active.hidden = hiddenStrokes(cell.strokes);
+          active.lastPoint = first;
+          eraseWhole(active, first);
+        } else {
+          cell.strokes.push(stroke);
+        }
+        canvas.setPointerCapture(event.pointerId);
+        draw(canvas, cell.strokes);
+      });
+
+      canvas.addEventListener('pointermove', event => {
+        if (drag?.id === event.pointerId && !active) {
+          const offset = drag.startY - event.clientY;
+          if (Math.abs(offset) >= 8) {
+            window.scrollTo(0, drag.scrollY + offset - Math.sign(offset) * 8);
+          }
+          return;
+        }
+        if (active?.id !== event.pointerId || active.canvas !== canvas) return;
+        const samples = event.getCoalescedEvents?.();
+        for (const sample of samples?.length ? samples : [event]) {
+          const point = position(sample, canvas);
+          if (active.stroke.removed) eraseWhole(active, point);
+          else active.stroke.points.push(point);
+        }
+        draw(canvas, cell.strokes);
+      });
+
+      for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+        canvas.addEventListener(name, event => {
+          if (drag?.id === event.pointerId) stopDrag();
+          if (active?.id !== event.pointerId || active.canvas !== canvas) return;
+          if (name === 'pointerup') {
+            const point = position(event, canvas);
+            if (active.stroke.removed) eraseWhole(active, point);
+            else active.stroke.points.push(point);
+            draw(canvas, cell.strokes);
+          }
+          finishStroke();
+        });
+      }
+    }
+
+    // 손날이 캔버스 바깥에 닿는 경우에도 펜슬 획이 진행 중이면 이동을 막는다.
+    document.addEventListener('touchmove', event => {
+      if (event.cancelable && (active?.pencil || performance.now() < ignoreTouchUntil)) {
+        event.preventDefault();
+      }
+    }, { passive: false, capture: true });
+
+    function render() {
+      finishStroke();
+      stopDrag();
+      lastCell = 0;
+      const entry = current();
+      const first = page * pageSize;
+      const count = Math.min(pageSize, questionCount - first);
+      $('heading').textContent = $('area').value + ' 문제풀이';
+      $('range').textContent = (first + 1) + '–' + (first + count) + '번';
+      $('page').textContent = (page + 1) + ' / ' + pageCount;
+      $('prev').disabled = page === 0;
+      $('next').disabled = page === pageCount - 1;
+      $('title').value = entry.title || '';
+      $('cells').replaceChildren();
+      canvases = [];
+
+      for (let i = 0; i < count; i++) {
+        const number = first + i + 1;
+        const cell = entry.cells[i] ??= { strokes: [], answer: '' };
+        const box = document.createElement('div');
+        const canvas = document.createElement('canvas');
+        const badge = document.createElement('span');
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+
+        box.className = 'cell';
+        canvas.width = W;
+        canvas.height = H;
+        canvas.setAttribute('aria-label', number + '번 필기 칸');
+        badge.className = 'number';
+        badge.textContent = number + '.';
+        label.className = 'answer';
+        label.textContent = '정답';
+        input.value = cell.answer || '';
+        input.maxLength = 10;
+        input.setAttribute('aria-label', number + '번 정답');
+        input.oninput = () => {
+          cell.answer = input.value;
+          save();
+        };
+
+        label.append(input);
+        box.append(canvas, badge, label);
+        $('cells').append(box);
+        canvases.push(canvas);
+        bindCanvas(canvas, cell, i);
+        draw(canvas, cell.strokes);
+      }
+    }
+
+    function setTool(nextTool) {
+      finishStroke();
+      tool = nextTool;
+      $('pen').setAttribute('aria-pressed', String(tool === 'pen'));
+      $('eraser').setAttribute('aria-pressed', String(tool === 'eraser'));
+    }
+
+    $('pen').onclick = () => setTool('pen');
+    $('eraser').onclick = () => setTool(tool === 'eraser' ? 'pen' : 'eraser');
+    $('input-mode').onchange = () => { finishStroke(); stopDrag(); };
+    $('area').onchange = () => { page = 0; render(); };
+    $('prev').onclick = () => { if (page > 0) { page--; render(); } };
+    $('next').onclick = () => { if (page < pageCount - 1) { page++; render(); } };
+    $('title').oninput = () => { current().title = $('title').value; save(); };
+
+    $('undo').onclick = () => {
+      finishStroke();
+      const cell = current().cells[lastCell];
+      if (!cell?.strokes.length) return;
+      cell.strokes.pop();
+      draw(canvases[lastCell], cell.strokes);
+      save();
+    };
+
+    $('clear').onclick = () => {
+      if (!confirm('현재 페이지의 필기와 정답을 지울까요?')) return;
+      finishStroke();
+      delete data[key()];
+      render();
+      save();
+    };
+
+    $('print').onclick = () => window.print();
+    $('export').onclick = () => {
+      finishStroke();
+      const output = document.createElement('canvas');
+      output.width = W * 2 + 40;
+      output.height = 110 + Math.ceil(canvases.length / 2) * H;
+      const ctx = output.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, output.width, output.height);
+      ctx.fillStyle = '#17243c';
+      ctx.font = 'bold 32px sans-serif';
+      ctx.fillText($('heading').textContent + ' · ' + (page + 1) + '페이지', 20, 44);
+      ctx.font = '24px sans-serif';
+      ctx.fillText(current().title || '', 20, 76, output.width - 40);
+      canvases.forEach((canvas, index) => {
+        const x = 20 + index % 2 * W;
+        const y = 90 + Math.floor(index / 2) * H;
+        ctx.strokeStyle = '#8592a4';
+        ctx.strokeRect(x, y, W, H);
+        ctx.drawImage(canvas, x, y);
+        ctx.fillStyle = '#17243c';
+        ctx.fillText((page * pageSize + index + 1) + '.', x + 14, y + 32);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(x + W - 180, y + H - 46, 180, 46);
+        ctx.strokeRect(x + W - 180, y + H - 46, 180, 46);
+        ctx.fillStyle = '#17243c';
+        ctx.fillText('정답 ' + current().cells[index].answer, x + W - 170, y + H - 14, 160);
+      });
+
+      const link = document.createElement('a');
+      link.download = 'GSAT_' + $('area').value + '_' + (page + 1) + '.png';
+      link.href = output.toDataURL('image/png');
+      document.body.append(link);
+      link.click();
+      link.remove();
+    };
+
+    let elapsed = 0;
+    let startedAt = null;
+
+    function updateTimer() {
+      const limit = Number($('duration').value);
+      let seconds = elapsed + (startedAt === null ? 0 : (Date.now() - startedAt) / 1000);
+      if (limit && seconds >= limit) {
+        startedAt = null;
+        elapsed = seconds = limit;
+        $('timer').disabled = true;
+      }
+      const display = limit ? Math.ceil(limit - seconds) : Math.floor(seconds);
+      $('timer').textContent = String(Math.floor(display / 60)).padStart(2, '0')
+        + ':' + String(display % 60).padStart(2, '0');
+      $('timer').setAttribute('aria-label', startedAt === null ? '타이머 시작' : '타이머 일시정지');
+    }
+
+    $('timer').onclick = () => {
+      if (startedAt === null) startedAt = Date.now();
+      else {
+        elapsed += (Date.now() - startedAt) / 1000;
+        startedAt = null;
+      }
+      updateTimer();
+    };
+
+    $('duration').onchange = $('reset-timer').onclick = () => {
+      elapsed = 0;
+      startedAt = null;
+      $('timer').disabled = false;
+      updateTimer();
+    };
+
+    setInterval(updateTimer, 200);
+    render();
+    updateTimer();
+  </script>
+</body>
+</html>
